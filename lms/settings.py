@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import dj_database_url
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -9,7 +10,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['mysite.com','127.0.0.1','localhost']
+ALLOWED_HOSTS = ['mysite.com','127.0.0.1','localhost','avisheklearn.herokuapp.com']
 
 
 INSTALLED_APPS = [
@@ -66,12 +67,9 @@ TEMPLATES = [
 WSGI_APPLICATION = 'lms.wsgi.application'
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+DATABASES = {}
+
+DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -104,25 +102,19 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 STATIC_URL = '/static/'
 
 MEDIA_URL = '/lms_media/'
 
 MEDIA_ROOT = BASE_DIR / 'lms_media'
 
-# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATICFILES_DIRS = [
     BASE_DIR/'static'
 ]
-
-# course rating settings
-STAR_RATINGS_ANONYMOUS = False
-STAR_RATINGS_STAR_WIDTH = 16
-STAR_RATINGS_STAR_HEIGHT = 16
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -156,3 +148,13 @@ SUMMERNOTE_CONFIG = {
         'disable_attachment': True,
     }
 }
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUD_NAME'),
+    'API_KEY': os.environ.get('API_KEY'),
+    'API_SECRET': os.environ.get('API_SECRET')
+}
+
+
+if os.getcwd() == '/app':
+    DEBUG = False

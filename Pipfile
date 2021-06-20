@@ -12,6 +12,11 @@ djangorestframework = "*"
 django-filter = "*"
 django-summernote = "*"
 django-adminlte3 = "*"
+django-cloudinary-storage = "*"
+python-dotenv = "*"
+gunicorn = "*"
+psycopg2-binary = "*"
+dj-database-url = "*"
 
 [dev-packages]
 
