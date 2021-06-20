@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock title %}
+
+{% block content %}
+
+<div class="row no-gutter my-5">
+    <div class="col-md-12">
+        <div class="d-flex align-items-center">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 col-lg-7 mx-auto text-center">
+                        {% if messages %} {% for message in messages %}
+                        <div class="my-2 alert alert-{{ message.tags }}">{{message}}</div>
+                        {% endfor %} {% endif %}
+                        <h1 class="mb-3">Sign up for a free account!</h1>
+                        <p class="mb-3">Select which type of account you want to create.</p>
+                        <a href="{% url 'account:student_signup' %}" class="btn btn-primary mx-2">I'm a Student</a>
+                        <a href="{% url 'account:teacher_signup' %}" class="btn btn-info mx-2">I'm a Teacher</a>
+                        <hr>
+                        <p class="text-center pb-3">
+                            <a href="{% url 'account:login' %}">Already have an account?</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

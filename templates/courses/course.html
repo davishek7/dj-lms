@@ -1,0 +1,153 @@
+{% extends 'base.html' %} 
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-md-9 col-12">
+    <h1>{{course.title}}</h1>
+    <p class="badge badge-info" style="font-size:12px;"><i class="fas fa-book-open"></i>&nbsp;{{course.course_modules.all.count}}&nbsp;Module{{course.course_modules.all.count|pluralize}}</p>
+    <p class="badge badge-info" style="font-size:12px;"><i class="fas fa-user-tie"></i>&nbsp;{{course.teacher.get_full_name}}</p>
+    <p class="badge badge-info" style="font-size:12px;"><i class="fas fa-user-graduate"></i>&nbsp;{{course.student.all.count}}&nbsp;Student{{course.student.all.count|pluralize}}</p>
+    <p>
+      {% if course.average_rating > 0 %}
+      <i class="fas fa-star text-warning"></i>&nbsp;{{course.average_rating|floatformat:1}}/5&nbsp;({{course.ratings.all.count}}&nbsp;Review{{course.ratings.all.count|pluralize}})
+      {% else %}
+      No ratings yet.
+      {% endif %}
+    </p>
+  </div>
+  <div class="col-md-3 col-12">
+    <img src="{{course.image.url}}" class="img-fluid border rounded" alt="{{course.title}}" style="width: 100%; height: 135px"/>
+    <div class="card">
+      <ul class="list-group">
+        <li class="list-group-item">
+          {% if request.user.is_authenticated and request.user.is_student %}
+            {% if request.user not in course.student.all %}
+              <a href="{% url 'student:student_course_detail_view' course.slug %}" class="btn btn-primary w-100" id="enrolled" style="display:none">
+                Start Learning
+              </a>
+              <a href="javascript:void(0)" class="btn btn-primary w-100" data-index="{{course.id}}" id="enrollButton">
+                Enroll
+              </a>
+            {% else %}
+              <a href="{% url 'student:student_course_detail_view' course.slug %}" class="btn btn-primary w-100">
+                Continue Learning
+              </a>
+            {% endif %}
+          {% elif request.user.is_authenticated and request.user.is_teacher %}
+            {% if request.user == course.teacher %}
+            <a href="{% url 'courses:add_modules' course.id course.slug %}" class="btn btn-primary w-100">Add/Edit Modules</a>
+            {% endif %}
+          {% else %}
+          <a href="{% url 'account:login' %}?next={{ request.path }}" class="btn btn-danger w-100">Login to continue</a>
+          {% endif %}
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-9 col-12">
+    <article>{{course.description|safe}}</article>
+
+    {% with course.course_modules.all as modules %}
+    {% if modules %}
+    <a class="btn btn-outline-primary mb-3 rounded" data-toggle="collapse" 
+      href="#modules" role="button" aria-expanded="false" aria-controls="collapseExample">
+      {{modules.count}}&nbsp;Module{{modules.count|pluralize}}
+    </a>
+    <div class="collapse" id="modules">
+      <ul class="list-group mb-3">
+        {% for module in modules %}
+        <li class="list-group-item">
+          {{forloop.counter}}. {{module.title}}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% else %}
+    <p>No modules yet.</p>
+    {% endif %}
+    {% endwith %}
+    <!-- Teacher Details -->
+    <div class="row p-2 mb-3 w-100">
+      <div class="col-md-3">
+        <img src="{{course.teacher.image.url}}" alt="{{course.teacher.username}}" 
+          class="float-left img-fluid rounded-circle" style="width:100px; height:100px;"/>
+      </div>
+      <div class="col-md-9">
+          <h5>Teacher</h5>
+          <h6><a href="#">{{course.teacher.get_full_name}}</a></h6>
+          <article>{{course.teacher.bio}}</article>
+      </div>
+    </div>
+    <!-- Review form -->
+    <h5>Student feedback</h5>
+    {% if request.user.is_authenticated and request.user in course.student.all %}
+      <form action="" method="POST" class="mb-3">
+        {% csrf_token %}
+        {{form|crispy}}
+        <button type="submit" class="btn btn-primary">Post Review</button>
+      </form>
+    {% endif %}
+
+    <!-- Review Section -->
+    {% with course.ratings.all as ratings %}
+    {% if ratings %}
+    <a class="btn btn-outline-primary mb-3 rounded" data-toggle="collapse" 
+      href="#ratings" role="button" aria-expanded="false" aria-controls="collapseExample">
+      {{ratings.count}}&nbsp;Review{{ratings.count|pluralize}}
+    </a>
+    
+    <div class="collapse" id="ratings">
+      {% for rating in ratings %}
+      <ul class="list-unstyled">
+        <li class="media mb-2 bg-light rounded border p-2">
+          <img src="{{rating.user.image.url}}" class="img-fluid rounded mr-2" style="width:25px;height:25px;" alt="{{rating.user.username}}">
+          <div class="media-body">
+            <h6>{{rating.user.get_full_name}}&nbsp;<span class="small text-muted">&nbsp;{{rating.created|date}}</span></h6>
+            <p class="small text-muted">Rating:&nbsp;<i class="fas fa-star text-warning"></i>&nbsp;{{rating.rate}}/5</p>
+            <p>{{rating.review}}</p>
+          </div>
+        </li>
+      </ul>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p>No reviews yet.</p>
+    {% endif %}
+    {% endwith %}
+  </div>
+</div>
+
+<script>
+  const enrollButton = document.getElementById("enrollButton");
+  const enrolled = document.getElementById("enrolled");
+
+  // Course Enrollment
+  enrollButton.addEventListener("click", (e) => {
+    e.preventDefault();
+    const courseId = enrollButton.getAttribute("data-index");
+
+    $.ajax({
+      type: "POST",
+      url: "{% url 'student:student_enroll_view' %}",
+      data: {
+        course_id: courseId,
+        csrfmiddlewaretoken: "{{csrf_token}}",
+      },
+      success: function (response) {
+        if (response.status === "ok") {
+          enrollButton.remove();
+          enrolled.style.display = "block";
+        }
+      },
+      error: function (response) {
+        alert(`Your enrollment status ${response.status}!`);
+      },
+    });
+  });
+</script>
+{% endblock %}

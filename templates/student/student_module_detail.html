@@ -1,0 +1,79 @@
+{% extends 'base.html' %} 
+{% load crispy_forms_tags %}
+{% load embed_video_tags %}
+
+{% block content %}
+<a href="{% url 'student:student_course_detail_view' module.course.slug %}" class="btn btn-link btn-sm">Go Back</a>
+  <h1 class='text-center mb-5'>{{module.course.title}} - {{module.position}} - {{module.title}}</h1>
+
+  <div class="row">
+    <div class="col-md-7">
+      {% if module.video %}
+      {% video module.video "100%x525" %}
+      {% endif %}
+      <div class="text-center my-5">
+        {% if module.notes %}
+        <a href="{{module.notes.url}}" class="btn btn-success">Download Notes</a>
+        {% endif %}
+        {% if module.ppt %}
+        <a href="{{module.ppt.url}}" class="btn btn-warning">Download Presentation</a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-md-5">
+      <article>{{module.content|safe}}</article>
+      <button class="btn btn-link btn-sm" data-index="{{module.id}}" id="completeButton"
+      {% if request.user in module.completed.all %}disabled{% endif %}>
+        {% if request.user not in module.completed.all %}
+        <i class="far fa-circle"></i>      
+        {% else %}
+        <i class="fas fa-check"></i>
+        {% endif %}
+      </button>
+      <div id="status">
+        {% if request.user not in module.completed.all %}
+        Mark as complete     
+        {% else %}
+        Completed
+        {% endif %}        
+      </div>
+    </div>
+  </div>
+
+<script>
+
+  const completeButton = document.getElementById("completeButton");
+  const status = document.getElementById("status");
+
+  completeButton.addEventListener('click',(e)=> {
+    e.preventDefault();
+    const moduleId = completeButton.getAttribute('data-index');
+
+    $.ajax({
+
+      type:"POST",
+      url:"{% url 'student:module_complete_view' %}",
+      data:{
+        module_id:moduleId,
+        csrfmiddlewaretoken:"{{csrf_token}}",
+      },
+      success:function(response){
+        if(response.status === 'ok'){
+          completeButton.innerHTML = '<i class="fas fa-check"></i>'
+          completeButton.setAttribute("disabled",true);
+          status.innerHTML = 'Completed'
+        }
+        else{
+          alert("Module not found")
+        }
+      },
+      error(response){
+        alert("Something went wrong")
+      }
+    })
+
+  });
+
+</script>
+
+{% endblock %}

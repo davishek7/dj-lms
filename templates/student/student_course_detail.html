@@ -1,0 +1,24 @@
+{% extends 'base.html' %} 
+{% load crispy_forms_tags %}
+{% load embed_video_tags %}
+
+{% block content %}
+
+<h1 class="">{{course.title}}</h1>
+<p class="badge badge-info mb-5" style="font-size:12px;"><i class="fas fa-book-open"></i>&nbsp;{{course.course_modules.all.count}} Module{{course.course_modules.all.count|pluralize}}</p>
+
+<ul class="list-group mb-5">
+  {% for module in modules %}
+  <li class="list-group-item">
+    <a href="{{module.get_student_detail_url}}">{{module.position}}. {{module.title}}</a>
+    <div class="float-right">
+      {% if request.user not in module.completed.all %}
+      <i class="far fa-circle"></i>      
+      {% else %}
+      <i class="fas fa-check"></i>
+      {% endif %}
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

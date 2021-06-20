@@ -1,0 +1,57 @@
+{% load crispy_forms_tags %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href={% if request.user.is_authenticated %}"{% url 'courses:all_courses' %}"{% else %}"/"{% endif %}>
+    <i class="fas fa-chalkboard-teacher"></i>&nbsp;<span class="text-success">e</span>-Learn<span class="text-warning">.</span></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item {% if nbar == 'courses' %}active{% endif %}">
+          <a class="nav-link" href="{% url 'courses:all_courses' %}">Courses</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)" role="button" aria-haspopup="true" aria-expanded="false">Categories</a>
+          <div class="dropdown-menu">
+          {% for category in categories %}
+          <a class="dropdown-item" href="{{category.get_absolute_url}}">{{category.name}}&nbsp;
+          <span class="badge badge-pill badge-success">{{category.courses.count}}</span>
+          </a>
+          {% endfor %}
+          </div>
+        </li>
+      </ul>
+      <ul class="navbar-nav ml-auto">
+      {% if request.user.is_authenticated %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)" role="button" aria-haspopup="true" aria-expanded="false">
+            <img src="{{request.user.image.url}}" alt="{{request.user.username}}" class="img-fluid rounded mr-2" style="width:25px;height:25px;">Hello, {{request.user}}
+          </a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" 
+            {% if request.user.is_teacher or request.user.is_superuser %}
+            href="{% url 'account:teacher_profile' %}"
+            {% elif request.user.is_student %}
+            href="{% url 'account:student_profile' %}"
+            {% endif %}
+            >
+            Profile
+            </a>
+            <a class="dropdown-item" href="{% url 'password_change' %}">Change Password</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'account:logout' %}">Logout</a>
+          </div>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'account:login' %}">Login</a>
+        </li>
+        {% endif %}
+        <form class="form-inline ml-sm-2" method="GET" action="{% url 'courses:search' %}">
+          {{search_form|crispy}}
+        </form>
+      </ul>
+    </div>
+  </div>
+</nav>

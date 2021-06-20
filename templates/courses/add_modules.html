@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+{% if messages %} {% for message in messages %}
+<div class="my-2 alert alert-{{ message.tags }}">{{message}}</div>
+{% endfor %} {% endif %}
+<div class="row mt-5">
+    <div class="col-md-9">
+        <h1>{{course.title}}</h1>
+        <p class="badge badge-info" style="font-size:12px;"><i class="fas fa-book-open"></i>&nbsp;{{course.course_modules.all.count}} Module{{course.course_modules.all.count|pluralize}}</p>
+        <p class="badge badge-info" style="font-size:12px;"><i class="fas fa-user-graduate"></i>&nbsp;{{course.student.all.count}}&nbsp;Student{{course.student.all.count|pluralize}}</p>
+    </div>
+    <div class="col-md-3">
+        <img src="{{course.image.url}}" class="img-fluid border rounded" alt="{{course.title}}" style="width: 100%; height: 135px"/>
+        <ul class="list-group">
+            <li class="list-group-item">
+                <button type="button" class="btn btn-primary btn-sm w-100" data-toggle="modal" data-target="#{{course.slug}}">
+                    Add Module
+                </button>
+                {% include 'courses/module_modal.html' %}
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-md-9">
+        <ul class="list-group my-3">
+            {% for module in course.course_modules.all %}
+            <li class="list-group-item">{{module.position}}. {{module.title}}
+                <a href="{% url 'courses:edit_modules' module.id module.slug %}" class="btn btn-sm btn-info float-right">Edit</a>
+            </li>
+            {% empty %}
+            <li>No modules!</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+{% endblock content %}

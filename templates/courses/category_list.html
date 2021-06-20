@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Courses{% endblock title %}
+
+{% block content %}
+
+{% if courses %}
+  <h1>Courses in {{category}}</h1>
+<div class="row my-3">
+  {% for course in courses %}
+  <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+    <div class="card shadow-lg my-3 rounded" style="max-width: 20rem">
+      <a href="{{course.get_absolute_url}}">
+        <img
+          src="{{course.image.url}}"
+          alt=""
+          class="card-img-top img-fluid p-2"
+          style="width: 100%; height: 135px"
+        />
+      </a>
+      <div class="card-body">
+        <h5 class="card-title" title="{{course.title}}">{{course.title|truncatechars:25}}</h5>
+        <div class="clearfix">
+          <a class="float-left" href="#">{{course.teacher.username}}</a>
+          <p class="float-right"><i class="fas fa-star text-warning"></i>&nbsp;
+            {% if course.average_rating > 0 %}
+            {{course.average_rating|floatformat:1}}
+            {% else %}
+            0
+            {% endif %}
+            /5
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+  {% else %}
+    <p class="alert alert-warning">No courses found in {{category}}</p>
+  {% endif %}
+</div>
+{% include 'common/pagination.html' %}
+{% endblock content %}
