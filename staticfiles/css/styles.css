@@ -1,0 +1,16 @@
+main {
+    min-height: 85vh;
+}
+
+#intro {
+    background:linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("/static/images/code.jpg")no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    height: 100%;
+}
+
+.search input[type="search"] {
+    max-width: 100%;
+}
