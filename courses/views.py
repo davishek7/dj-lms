@@ -4,9 +4,9 @@ from django.template.defaultfilters import slugify
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import Course, Category, Module
+from .models import Course, Category, Module,Rating
 from .forms import CourseForm, ModuleForm, SearchForm,RatingForm
-from account.decorators import teacher_required
+from account.decorators import teacher_required,enrollment_required
 from .randomslug import random_slug
 
 
@@ -45,22 +45,7 @@ def course_details(request, pk, slug):
 
     course = get_object_or_404(Course, id=pk)
 
-    if request.method == 'POST':
-        form = RatingForm(request.POST)
-        if form.is_valid():
-            rating = form.save(commit=False)
-            rating.user = request.user
-            rating.course = course
-            rating.save()
-            messages.success(request,'Thank you for your valuable review.')
-            return HttpResponseRedirect('/course/'+str(course.id)+'/'+course.slug+'/')
-        else:
-            messages.warning(request,'Something went wrong! Please try again later.')
-            return HttpResponseRedirect('/course/'+str(course.id)+'/'+course.slug+'/')
-    else:
-        form = RatingForm()
-
-    context = {'course': course, 'form': form}
+    context = {'course': course}
 
     return render(request, 'courses/course.html', context)
 
@@ -193,6 +178,31 @@ def category_list(request, category_slug):
 
     context = {'category': category, 'courses': courses}
     return render(request, 'courses/category_list.html', context)
+
+
+# @enrollment_required
+@login_required
+def course_rating(request,pk,slug):
+    
+    course = get_object_or_404(Course,id=pk)
+
+    if request.method == 'POST':
+        form = RatingForm(request.POST)
+        if form.is_valid():
+            rating = form.save(commit=False)
+            rating.user = request.user
+            rating.course = course
+            rating.save()
+            messages.success(request,'Thank you for your valuable review.')
+            return HttpResponseRedirect('/course/'+str(course.id)+'/'+course.slug+'/')
+        else:
+            messages.warning(request,'Something went wrong! Please try again later.')
+            return HttpResponseRedirect('/course/'+str(course.id)+'/'+course.slug+'/')
+    else:
+        form = RatingForm()
+
+    context = {'course':course,'form':form}
+    return render(request,'courses/course_rating.html',context)
 
 
 def search(request):

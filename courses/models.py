@@ -28,6 +28,10 @@ class Category(models.Model):
 
 class Course(models.Model):
 
+    class CourseObjects(models.Manager):
+        def get_queryset(self):
+            return super().get_queryset().filter(status='published')
+
     options = (
         ('draft','Draft'),
         ('published','Published')
@@ -44,6 +48,8 @@ class Course(models.Model):
     status = models.CharField(max_length=10,choices=options,default='draft')
     student = models.ManyToManyField(settings.AUTH_USER_MODEL,related_name='courses_joined',blank=True)
     bookmarks = models.ManyToManyField(settings.AUTH_USER_MODEL,related_name='bookmark',blank=True)
+    objects = models.Manager() 
+    courseobjects = CourseObjects()
 
     def __str__(self):
         return self.title

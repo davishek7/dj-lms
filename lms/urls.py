@@ -9,7 +9,17 @@ urlpatterns = [
     path('account/', include('account.urls', namespace='account')),
     path('', include('courses.urls', namespace='courses')),
     path('students/', include('student.urls', namespace='student')),
+
+    # Third party app urls
+
     path('summernote/', include('django_summernote.urls')),
+
+    # API ENDPOINTS
+    path('api/courses/',include('api.urls.courses_urls')),
+    path('api/account/',include('api.urls.account_urls')),
+    path('api/student/',include('api.urls.student_urls')),
+
+     # Authentication urls
 
     path('reset-password/', auth_views.PasswordResetView.as_view(template_name='account/password_reset.html'),
          name="password_reset"),

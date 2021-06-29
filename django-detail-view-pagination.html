@@ -1,0 +1,14 @@
+<div class="row justify-content-end">
+  <ul class="pagination">
+    {% if course.get_previous_by_created %}
+        <li class="page-item">
+             <a class="page-link" href="{% url 'courses:course_details' course.get_previous_by_created.id course.get_previous_by_created.slug %}">&larr; Previous</a>
+        </li>
+    {% endif %}
+    {% if course.get_next_by_created %}
+        <li class="page-item">
+             <a class="page-link" href="{% url 'courses:course_details' course.get_next_by_created.id course.get_next_by_created.slug %}">Next &rarr;</a>
+        </li>
+    {% endif %}
+  </ul>
+</div>

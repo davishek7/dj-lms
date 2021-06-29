@@ -28,13 +28,16 @@ INSTALLED_APPS = [
     'django_filters',
     'django_summernote',
     'rest_framework',
+    'corsheaders',
 
     'account.apps.AccountConfig',
     'courses.apps.CoursesConfig',
     'student.apps.StudentConfig',
+    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -44,6 +47,13 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ]
+}
 
 ROOT_URLCONF = 'lms.urls'
 
@@ -109,7 +119,7 @@ MEDIA_URL = '/lms_media/'
 
 MEDIA_ROOT = BASE_DIR / 'lms_media'
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+#DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
@@ -155,6 +165,8 @@ CLOUDINARY_STORAGE = {
     'API_KEY': os.environ.get('API_KEY'),
     'API_SECRET': os.environ.get('API_SECRET')
 }
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 
 if os.getcwd() == '/app':
