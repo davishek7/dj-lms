@@ -62,6 +62,7 @@ def course_create(request):
             course.teacher = request.user
             course.save()
             title = form.cleaned_data.get('title')
+            print(data)
             messages.success(
                 request, f"'{title}' has been added successfully!")
             return HttpResponseRedirect('/course/module/create/'+str(course.id)+'/'+course.slug+'/')
