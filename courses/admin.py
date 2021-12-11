@@ -1,9 +1,10 @@
 from django.contrib import admin
-from .models import Course,Category,Module,Rating
+from .models import Course,Category,Section,Module,Rating
 from django_summernote.admin import SummernoteModelAdmin
 from .randomslug import random_slug
 
 
+@admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display=['name','slug']
     prepopulated_fields={'slug':('name',)}
@@ -11,6 +12,8 @@ class CategoryAdmin(admin.ModelAdmin):
     class Meta:
         model = Category
 
+
+@admin.register(Course)
 class CourseAdmin(SummernoteModelAdmin):
     list_display = ['__str__','teacher']
     search_fields = ['title', 'teacher__username', 'teacher__email']
@@ -20,16 +23,23 @@ class CourseAdmin(SummernoteModelAdmin):
     class Meta:
         model = Course
 
+
+@admin.register(Section)
+class SectionAdmin(admin.ModelAdmin):
+    list_display = ['__str__','title','slug','course']
+    search_fields = ['title', 'course']
+    prepopulated_fields={'slug':('title',)}
+
+    class Meta:
+        model = Section
+
+
+@admin.register(Module)
 class ModuleAdmin(SummernoteModelAdmin):
-    list_display=['__str__','title','slug','course',]
+    list_display=['__str__','title','slug','course','section']
+    search_fields = ['title', 'course','section']
     prepopulated_fields={'slug':('title',)}
     summernote_fields = ['content']
 
     class Meta:
         model = Module
-
-
-admin.site.register(Course, CourseAdmin)
-admin.site.register(Category,CategoryAdmin)
-admin.site.register(Module,ModuleAdmin)
-admin.site.register(Rating)

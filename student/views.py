@@ -19,10 +19,10 @@ def student_course_detail_view(request, slug):
 
 @student_required
 @login_required
-def student_module_detail_view(request, course_pk, course_slug, position, slug):
+def student_module_detail_view(request, course_pk, course_slug, order, slug):
 
     module = get_object_or_404(Module, course__id=course_pk,
-                               course__slug=course_slug, position=position, slug=slug)
+                               course__slug=course_slug, order=order, slug=slug)
 
     context = {'module': module}
 

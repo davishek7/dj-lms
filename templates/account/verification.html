@@ -1,0 +1,15 @@
+{% extends 'account/base.html' %}
+{% load crispy_forms_tags %}
+{% load i18n static %}
+
+{% block title %}Account Verification{% endblock title %}
+
+{% block content %}
+
+{% if messages %}
+{% for message in messages %}
+<div class="my-2 alert alert-{{ message.tags }}">{{message}}</div>
+{% endfor %}
+{% endif %}
+
+{% endblock %}

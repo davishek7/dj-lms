@@ -7,8 +7,9 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from courses.filters import CourseFilter
 from student.filters import StudentCourseFilter
 from courses.models import Course
-from .models import Student
+from .models import User, Student, EmailVerificationToken
 from .decorators import unauthenticated_user,teacher_required,student_required
+from .utils import check_token_expiration
 
 
 @unauthenticated_user
@@ -21,7 +22,7 @@ def student_signup(request):
             user.is_student=True
             user.save()
             student=Student.objects.create(user=user)
-            messages.success(request,'Your account has been created successfully!')
+            messages.success(request,'Your account has been created successfully. PLease verify your email.')
             return redirect('account:login')
         else:
             messages.warning(request,'Something went wrong! Please try again.')
@@ -40,7 +41,7 @@ def teacher_signup(request):
             user=form.save(commit=False)
             user.is_teacher=True
             user.save()
-            messages.success(request,'Your account has been created successfully!')
+            messages.success(request,'Your account has been created successfully. PLease verify your email.')
             return redirect('account:login')
         else:
             messages.warning(request,'Something went wrong! Please try again.')
@@ -48,6 +49,32 @@ def teacher_signup(request):
         form = TeacherSignUpForm()
     context = {'form':form}
     return render(request,'account/teacher_signup.html',context)
+
+
+@unauthenticated_user
+def verify_email(request):
+
+    token = request.GET.get('token')
+
+    user_token = EmailVerificationToken.objects.filter(token=token).first()
+
+    if user_token:
+        user = User.objects.filter(id=user_token.user_id).first()
+        if user.is_active:
+            messages.info(request,'User already verified.')
+            return redirect('account:login')
+        elif check_token_expiration(user_token) > 60:
+            messages.warning(request,'Token expired.')
+            return redirect('account:login')            
+        else:
+            user.is_active = True
+            user.save()
+            messages.success(request,'Email verified successfully. You can login now.')
+            return redirect('account:login')
+    else:
+        messages.warning(request,'Invalid token.')
+
+    return render(request,'account/verification.html')
 
 
 @teacher_required

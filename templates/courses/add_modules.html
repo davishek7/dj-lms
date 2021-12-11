@@ -29,7 +29,7 @@
     <div class="col-md-9">
         <ul class="list-group my-3">
             {% for module in course.course_modules.all %}
-            <li class="list-group-item">{{module.position}}. {{module.title}}
+            <li class="list-group-item">{{module.order}}. {{module.title}}
                 <a href="{% url 'courses:edit_modules' module.id module.slug %}" class="btn btn-sm btn-info float-right">Edit</a>
             </li>
             {% empty %}

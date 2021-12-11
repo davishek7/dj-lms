@@ -1,5 +1,5 @@
 from django import forms
-from .models import Course,Module,Category,Rating
+from .models import Course,Section,Module,Category,Rating
 from django_summernote.widgets import SummernoteWidget
 
 
@@ -20,17 +20,25 @@ class CourseForm(forms.ModelForm):
         model = Course
 
 
+class SectionForm(forms.ModelForm):
+
+    order = forms.IntegerField(required=True,widget=forms.NumberInput(attrs={'class':'mb-2'}))
+    title = forms.CharField(required=True,widget=forms.TextInput(attrs={'class':'mb-2'}))
+
+    class Meta:
+        fields = ['order','title']
+        model = Section
+
+
 class ModuleForm(forms.ModelForm):
 
-    position = forms.IntegerField(required=True,widget=forms.NumberInput(attrs={'class':'mb-2'}))
+    order = forms.IntegerField(required=True,widget=forms.NumberInput(attrs={'class':'mb-2'}))
     title = forms.CharField(required=True,widget=forms.TextInput(attrs={'class':'mb-2'}))
     content = forms.CharField(required=True,widget=SummernoteWidget(attrs={'class':'mb-2'}),help_text='*Max 2000 characters')
     video = forms.URLField(required=True,widget=forms.TextInput(attrs={'class':'mb-2'}))
-    notes = forms.FileField(required=False,widget=forms.FileInput(attrs={'class':'mb-2'}))
-    ppt = forms.FileField(label='Presentation',required=False,widget=forms.FileInput(attrs={'class':'mb-2'}))
 
     class Meta:
-        fields = ['position','title','content','video','notes','ppt']
+        fields = ['order','title','content','video']
         model = Module
 
 
@@ -41,6 +49,7 @@ class RatingForm(forms.ModelForm):
     class Meta:
         fields = ['rate','review']
         model = Rating
+
 
 class SearchForm(forms.Form):
     q = forms.CharField(label='',widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Search for Courses'}),required=True)

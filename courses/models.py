@@ -48,6 +48,7 @@ class Course(models.Model):
     status = models.CharField(max_length=10,choices=options,default='draft')
     student = models.ManyToManyField(settings.AUTH_USER_MODEL,related_name='courses_joined',blank=True)
     bookmarks = models.ManyToManyField(settings.AUTH_USER_MODEL,related_name='bookmark',blank=True)
+    completed = models.ManyToManyField(settings.AUTH_USER_MODEL,related_name='course_completed',blank=True)
     objects = models.Manager() 
     courseobjects = CourseObjects()
 
@@ -65,18 +66,33 @@ class Course(models.Model):
         ordering = ['created']
 
 
-class Module(models.Model):
-    course = models.ForeignKey(Course,related_name='course_modules',on_delete=models.CASCADE,blank=True)
+class Section(models.Model):
+    course = models.ForeignKey(Course,related_name='course_sections',on_delete=models.CASCADE,blank=True)
     title = models.CharField(max_length=200,blank=True)
     slug = models.SlugField(max_length=200,unique=True)
-    position = models.PositiveSmallIntegerField(verbose_name="chapter",blank=True,null=True)
-    content = models.TextField(validators=[MaxLengthValidator(2000)],blank=True)
-    video = models.URLField(max_length=500,blank=True)
-    notes = models.FileField(upload_to=upload_lesson_files,blank=True)
-    ppt = models.FileField(upload_to=upload_lesson_files,blank=True)
+    order = models.PositiveSmallIntegerField(blank=True,null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    completed = models.ManyToManyField(settings.AUTH_USER_MODEL,related_name='completed',blank=True)
+    completed = models.ManyToManyField(settings.AUTH_USER_MODEL,related_name='section_completed',blank=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['order']
+
+
+class Module(models.Model):
+    course = models.ForeignKey(Course,related_name='course_modules',on_delete=models.CASCADE,blank=True)
+    section = models.ForeignKey(Section,related_name='section_modules',on_delete=models.CASCADE,blank=True)
+    title = models.CharField(max_length=200,blank=True)
+    slug = models.SlugField(max_length=200,unique=True)
+    order = models.PositiveSmallIntegerField(blank=True,null=True)
+    content = models.TextField(validators=[MaxLengthValidator(2000)],blank=True)
+    video = models.URLField(max_length=500,blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    completed = models.ManyToManyField(settings.AUTH_USER_MODEL,related_name='module_completed',blank=True)
 
     def __str__(self):
         return self.title
@@ -84,9 +100,9 @@ class Module(models.Model):
     @property
     def get_student_detail_url(self):
         return reverse("student:student_module_detail_view", kwargs={'course_pk':self.course.id, 'course_slug':self.course.slug, 
-                                                        'position':self.position,'slug': self.slug,})
+                                                        'order':self.order,'slug': self.slug,})
     class Meta:
-        ordering = ['created']
+        ordering = ['order']
 
 
 class Rating(models.Model):

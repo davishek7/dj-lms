@@ -62,7 +62,6 @@ def course_create(request):
             course.teacher = request.user
             course.save()
             title = form.cleaned_data.get('title')
-            print(data)
             messages.success(
                 request, f"'{title}' has been added successfully!")
             return HttpResponseRedirect('/course/module/create/'+str(course.id)+'/'+course.slug+'/')
@@ -113,11 +112,17 @@ def add_modules(request, pk, slug):
             module = form.save(commit=False)
             module.slug = slugify(module.title + "-" + random_slug())
             module.course = course
-            module.save()
-            title = form.cleaned_data.get('title')
-            messages.success(
-                request, f'Module {title} has been added successfully!')
-            return HttpResponseRedirect('/course/module/create/'+str(course.id)+'/'+course.slug+'/')
+            module.section_id = 1
+            new_order = form.cleaned_data['order']
+            if Module.objects.filter(order = new_order).exists():
+                messages.warning(request, f'Moule with order {new_order} already exists.')
+                return HttpResponseRedirect('/course/module/create/'+str(course.id)+'/'+course.slug+'/')
+            else:
+                module.save()
+                title = form.cleaned_data.get('title')
+                messages.success(
+                    request, f'Module {title} has been added successfully!')
+                return HttpResponseRedirect('/course/module/create/'+str(course.id)+'/'+course.slug+'/')
         else:
             messages.warning(
                 request, 'Something went wrong! Please try again.')

@@ -10,7 +10,7 @@
 <ul class="list-group mb-5">
   {% for module in modules %}
   <li class="list-group-item">
-    <a href="{{module.get_student_detail_url}}">{{module.position}}. {{module.title}}</a>
+    <a href="{{module.get_student_detail_url}}">{{module.order}}. {{module.title}}</a>
     <div class="float-right">
       {% if request.user not in module.completed.all %}
       <i class="far fa-circle"></i>      

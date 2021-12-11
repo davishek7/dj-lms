@@ -5,12 +5,14 @@ import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['mysite.com','127.0.0.1','localhost','avisheklearn.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1','avisheklearn.herokuapp.com']
+
+DEV_URL = os.environ.get('DEV_URL')
+LIVE_URL = os.environ.get('LIVE_URL')
 
 
 INSTALLED_APPS = [
@@ -68,8 +70,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'courses.context_processors.categories',
-                'courses.context_processors.search_form',
+                'commons.context_processors.global_context',
             ],
         },
     },

@@ -11,6 +11,7 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(next_page='account:login'), name='logout'),
     path('signup/student/', views.student_signup, name='student_signup'),
     path('signup/teacher/', views.teacher_signup, name='teacher_signup'),
+    path('verify-email/',views.verify_email),
     path('teacher/profile/',views.teacher_profile,name='teacher_profile'),
     path('student/profile/',views.student_profile,name='student_profile'),
 ]
