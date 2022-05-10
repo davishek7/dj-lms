@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from courses.models import Category,Course,Module,Rating
+from courses.models import Category,Course,Module     #,Rating
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -27,9 +27,9 @@ class ModuleSerializer(serializers.ModelSerializer):
     course = CourseSerializer(many=False)
 
 
-class RatingSerializer(serializers.ModelSerializer):
+# class RatingSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = Rating
-        fields = ['id','user','course','rate','review','created','updated']
-    course = CourseSerializer(many=False)
+#     class Meta:
+#         model = Rating
+#         fields = ['id','user','course','rate','review','created','updated']
+#     course = CourseSerializer(many=False)

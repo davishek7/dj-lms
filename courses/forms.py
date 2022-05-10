@@ -1,5 +1,5 @@
 from django import forms
-from .models import Course,Section,Module,Category,Rating
+from .models import Course,Module,Category         #,Rating, Section
 from django_summernote.widgets import SummernoteWidget
 
 
@@ -20,14 +20,14 @@ class CourseForm(forms.ModelForm):
         model = Course
 
 
-class SectionForm(forms.ModelForm):
+# class SectionForm(forms.ModelForm):
 
-    order = forms.IntegerField(required=True,widget=forms.NumberInput(attrs={'class':'mb-2'}))
-    title = forms.CharField(required=True,widget=forms.TextInput(attrs={'class':'mb-2'}))
+#     order = forms.IntegerField(required=True,widget=forms.NumberInput(attrs={'class':'mb-2'}))
+#     title = forms.CharField(required=True,widget=forms.TextInput(attrs={'class':'mb-2'}))
 
-    class Meta:
-        fields = ['order','title']
-        model = Section
+#     class Meta:
+#         fields = ['order','title']
+#         model = Section
 
 
 class ModuleForm(forms.ModelForm):
@@ -42,13 +42,13 @@ class ModuleForm(forms.ModelForm):
         model = Module
 
 
-class RatingForm(forms.ModelForm):
-    rate = forms.IntegerField(required=True,widget=forms.Select(choices=Rating.options, attrs={'class': 'mb-2'}))
-    review = forms.CharField(widget=forms.Textarea(attrs={'rows': 5, 'placeholder': 'Your review','class':'mb-2'}))
+# class RatingForm(forms.ModelForm):
+#     rate = forms.IntegerField(required=True,widget=forms.Select(choices=Rating.options, attrs={'class': 'mb-2'}))
+#     review = forms.CharField(widget=forms.Textarea(attrs={'rows': 5, 'placeholder': 'Your review','class':'mb-2'}))
 
-    class Meta:
-        fields = ['rate','review']
-        model = Rating
+#     class Meta:
+#         fields = ['rate','review']
+#         model = Rating
 
 
 class SearchForm(forms.Form):

@@ -5,9 +5,8 @@ from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from api.permissions import IsEnrolled
-from courses.models import Course,Category,Module,Rating
-from api.serializers.courses_serializers import (CourseSerializer,CategorySerializer,
-                                                ModuleSerializer,RatingSerializer)
+from courses.models import Course,Category,Module       #,Rating
+from api.serializers.courses_serializers import CourseSerializer,CategorySerializer, ModuleSerializer      #,RatingSerializer
 
 
 

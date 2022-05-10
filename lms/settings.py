@@ -36,6 +36,8 @@ INSTALLED_APPS = [
     'courses.apps.CoursesConfig',
     'student.apps.StudentConfig',
     'api.apps.ApiConfig',
+
+    'commons'
 ]
 
 MIDDLEWARE = [

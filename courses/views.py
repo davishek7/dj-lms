@@ -4,8 +4,8 @@ from django.template.defaultfilters import slugify
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import Course, Category, Module,Rating
-from .forms import CourseForm, ModuleForm, SearchForm,RatingForm
+from .models import Course, Category, Module      #,Rating
+from .forms import CourseForm, ModuleForm, SearchForm     #RatingForm
 from account.decorators import teacher_required,enrollment_required
 from .randomslug import random_slug
 
@@ -115,7 +115,7 @@ def add_modules(request, pk, slug):
             module.section_id = 1
             new_order = form.cleaned_data['order']
             if Module.objects.filter(order = new_order).exists():
-                messages.warning(request, f'Moule with order {new_order} already exists.')
+                messages.warning(request, f'Module with order {new_order} already exists.')
                 return HttpResponseRedirect('/course/module/create/'+str(course.id)+'/'+course.slug+'/')
             else:
                 module.save()

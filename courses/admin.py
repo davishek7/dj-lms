@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Course,Category,Section,Module,Rating
+from .models import Course,Category,Module             #Rating,Section
 from django_summernote.admin import SummernoteModelAdmin
 from .randomslug import random_slug
 
@@ -15,7 +15,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Course)
 class CourseAdmin(SummernoteModelAdmin):
-    list_display = ['__str__','teacher']
+    list_display = ['__str__',]         #'teacher']
     search_fields = ['title', 'teacher__username', 'teacher__email']
     prepopulated_fields={'slug':('title',)}
     summernote_fields = ['description']
@@ -24,20 +24,20 @@ class CourseAdmin(SummernoteModelAdmin):
         model = Course
 
 
-@admin.register(Section)
-class SectionAdmin(admin.ModelAdmin):
-    list_display = ['__str__','title','slug','course']
-    search_fields = ['title', 'course']
-    prepopulated_fields={'slug':('title',)}
+# @admin.register(Section)
+# class SectionAdmin(admin.ModelAdmin):
+#     list_display = ['__str__','title','slug','course']
+#     search_fields = ['title', 'course']
+#     prepopulated_fields={'slug':('title',)}
 
-    class Meta:
-        model = Section
+#     class Meta:
+#         model = Section
 
 
 @admin.register(Module)
 class ModuleAdmin(SummernoteModelAdmin):
-    list_display=['__str__','title','slug','course','section']
-    search_fields = ['title', 'course','section']
+    list_display=['__str__','title','slug',]         #'course','section']
+    search_fields = ['title',]         # 'course',]                   #'section']
     prepopulated_fields={'slug':('title',)}
     summernote_fields = ['content']
 
